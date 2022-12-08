@@ -1,0 +1,224 @@
+---
+title: "overview_analysis"
+author: "Connor Flynn"
+date: "12/8/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(here)
+library(readr)
+library(janitor)
+library(tidyr)
+library(tidyverse)
+library(plotly)
+library(RColorBrewer)
+library(dplyr)
+library(forcats)
+library(hrbrthemes)
+library(viridis)
+
+options(scipen = 99)
+
+```
+
+The purpose of this R Markdown is to perform a preliminary, overview analysis of the dataset. 
+
+
+Import Data
+
+
+```{r}
+nmdata <- read_csv(here("data/Literature_transcriptomics_review_and_data_of_Nanoparticle_Induced_Cellular_Outcomes.csv"))
+```
+
+Clean Column Names
+
+```{r}
+nmdata <- nmdata %>% 
+  clean_names()
+```
+
+
+```{r}
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress", 
+                                        replacement = "UPR_ER_Stress")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "angiogenenesis_responses", 
+                                        replacement = "Angiogenesis")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "metal_ion_responses", 
+                                        replacement = "Metal_Ion")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "inflammation_and_immune_responses", 
+                                        replacement = "Inflammation_Immune")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "cell_adhesion_and_extracellular_matrix_responses", 
+                                        replacement = "Cell_Adhesion_ECM")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "dna_damage_and_repair_responses", 
+                                        replacement = "DNA_Damage_Repair")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "cell_death_and_apoptosis_responses", 
+                                        replacement = "Cell_Death_Apoptosis")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "cell_cycle_and_proliferation_responses", 
+                                        replacement = "Cell_Cycle_and_Proliferation")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "cytoskeleton_organization_responses", 
+                                        replacement = "Cytoskeleton_Organization")
+
+
+  
+```
+
+
+```{r}
+nmdata[nmdata == "Ag_NPs"] <- "Ag"
+nmdata[nmdata == "Au_NPs"] <- "Au"
+
+nmdata[nmdata == "CuO_NPs"] <- "CuO"
+nmdata[nmdata == "Fe2O3_NPs"] <- "Fe203"
+nmdata[nmdata == "Polymeric_NPs"] <- "Polymeric"
+nmdata[nmdata == "Polystyrene_NPs"] <- "Polystyrene"
+nmdata[nmdata == "TiO2_NPs"] <- "TiO2"
+nmdata[nmdata == "ZnO_NPs"] <- "ZnO"
+```
+
+
+
+
+
+Select Nanoparticle and Bioassay Columns
+
+```{r}
+nmdata_longer <- nmdata %>% 
+  select(nanoparticles, Cell_Cycle_and_Proliferation, Cell_Death_Apoptosis, DNA_Damage_Repair, Cell_Adhesion_ECM, Inflammation_Immune, UPR_ER_Stress, Metal_Ion, Angiogenesis, Cytoskeleton_Organization)
+```
+
+
+Pivot Data Longer to have 1 response column
+
+```{r}
+nmdata_longer <- nmdata_longer %>% 
+  tidyr::pivot_longer(cols = !nanoparticles, names_to = "responses", 
+               values_to = "effects")
+```
+
+
+Group By Responses and Effects and Count 
+
+```{r}
+nmdata_longer_responses <- nmdata_longer %>% 
+  group_by(responses, effects) %>% 
+  count()
+```
+
+
+Plot Responses and Effects Count
+
+
+```{r}
+ggplot(data = nmdata_longer_responses, aes(fill = effects, y=n, x=responses)) + 
+    geom_bar(position="dodge", stat="identity") + 
+  coord_flip() + 
+  theme_minimal() +
+  scale_fill_brewer(palette = "Dark2", direction = -1)
+```
+
+
+Group by Nanoparticles and Effects and Count 
+
+```{r}
+nmdata_longer_nanoparticles <- nmdata_longer %>% 
+  group_by(nanoparticles, effects) %>% 
+  count()
+```
+
+
+Plot Nanoparticles and Effects Count
+
+```{r}
+ggplot(data = nmdata_longer_nanoparticles, aes(fill = effects, y=n, x=nanoparticles)) + 
+    geom_bar(position="dodge", stat="identity") + 
+  coord_flip() + 
+  theme_minimal() +
+    scale_fill_brewer(palette = "Dark2", direction = -1)
+```
+
+Group by Nanoparticles, Responses, and Effects and Count
+
+```{r}
+nmdata_longer_nanoparticles_effects <- nmdata_longer %>% 
+  group_by(nanoparticles, responses, effects) %>% 
+  count()
+```
+
+
+Plot Nanoparticles, Responses, and Effects Count
+
+```{r}
+ggplot(data = nmdata_longer_nanoparticles_effects,                         # Draw barplot with grouping & stacking
+       aes(x = n,
+           y = responses,
+           fill = nanoparticles)) + 
+  geom_bar(stat = "identity",
+           position = "stack") +
+  facet_grid(~ effects) + 
+  #coord_flip() + 
+  theme_minimal() +
+  scale_fill_brewer(palette="Set3") 
+
+```
+Violin Plot
+
+Select Columns of Interest
+
+```{r}
+nmdata_longer_dose_duration <- nmdata %>% 
+  select(nanoparticles, UPR_ER_Stress, Angiogenesis, Metal_Ion, Inflammation_Immune, Cell_Adhesion_ECM, DNA_Damage_Repair, Cell_Death_Apoptosis, Cell_Cycle_and_Proliferation, Cytoskeleton_Organization, exposure_dose_mg_ml, exposure_duration_h)
+```
+
+Pivot Data Longer to have 1 response column
+
+```{r}
+nmdata_longer_dose_duration <- nmdata_longer_dose_duration %>% 
+  tidyr::pivot_longer(cols = (UPR_ER_Stress: Cytoskeleton_Organization), 
+                      names_to = "responses", 
+               values_to = "effects")
+```
+
+
+Change Exposure dose to numeric class
+
+```{r}
+nmdata_longer_dose_duration$exposure_dose_mg_ml <- as.numeric(nmdata_longer_dose_duration$exposure_dose_mg_ml)
+```
+
+Plot Violin Plot
+
+
+```{r}
+ggplot(data = nmdata_longer_dose_duration, aes(fill=effects, y=exposure_dose_mg_ml, x=responses)) + 
+    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
+    scale_fill_viridis(discrete=T, name="") +
+    theme_ipsum()  +
+    xlab("Bioassay") +
+    ylab("exposure dose mg/mL") +
+    ggtitle("Influence of Nanoparticle Dose on Bioassay Outcome up to 30 mg/mL") +
+  theme(plot.title = element_text(size = 10, hjust = 0.5)) +
+    ylim(0,30) +
+  coord_flip() 
+```
