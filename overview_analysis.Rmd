@@ -1,8 +1,10 @@
 ---
 title: "overview_analysis"
-author: "Connor Flynn"
+author: "Armando Luna, Brittany Johnson, Connor Flynn"
 date: "12/8/2022"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -210,7 +212,7 @@ nmdata_longer_dose_duration$exposure_dose_mg_ml <- as.numeric(nmdata_longer_dose
 Plot Violin Plot
 
 
-```{r}
+```{r, warning=FALSE}
 ggplot(data = nmdata_longer_dose_duration, aes(fill=effects, y=exposure_dose_mg_ml, x=responses)) + 
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
     scale_fill_viridis(discrete=T, name="") +
