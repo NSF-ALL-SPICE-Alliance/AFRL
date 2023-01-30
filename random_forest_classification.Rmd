@@ -480,7 +480,7 @@ all_data_good_models <-  Reduce(function(x, y) merge(x, y, all=TRUE), df_list_go
 ```
 
 ```{r}
-ggplot(all_data_good_models, aes(x=Var.Names, y=`MeanDecreaseAccuracy`)) +
+plot2 <- ggplot(all_data_good_models, aes(x=Var.Names, y=`MeanDecreaseAccuracy`)) +
   geom_segment( aes(x=Var.Names, xend=Var.Names, y=0, yend=`MeanDecreaseAccuracy`), color="skyblue") +
   geom_point(aes(size = MeanDecreaseGini), color="blue", alpha=0.6) +
   theme_light() +
@@ -492,6 +492,8 @@ ggplot(all_data_good_models, aes(x=Var.Names, y=`MeanDecreaseAccuracy`)) +
     axis.ticks.y = element_blank()
   ) +
   facet_wrap(~assay)
+
+ggplotly(plot2)
 
 
 ```
