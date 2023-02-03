@@ -1,0 +1,96 @@
+---
+title: "random_forest_no_effect_variables"
+author: "AJ Luna"
+date: "2023-02-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(here)
+library(readr)
+library(janitor)
+library(tidyr)
+library(tidyverse)
+library(plotly)
+library(randomForest)
+library(edarf)
+
+```
+
+## Subset variables that had "No Effect" 
+
+```{r cars}
+#cell_cycle_and_proliferation_responses w/ "No Effect"
+no_response_cell_cycle_and_proliferation <- subset(nmdata_no_na, cell_cycle_and_proliferation_responses=="no_effect")
+#drop all other variable responses
+no_response_cell_cycle_and_proliferation <- no_response_cell_cycle_and_proliferation[-c(14:21)]
+
+#cell_death_and_apoptosis_responses w/ "No Effect
+no_response_cell_death_and_apoptosis_responses <- subset(nmdata_no_na,cell_death_and_apoptosis_responses=="no_effect")
+#drop all other variable responses
+no_response_cell_death_and_apoptosis_responses <- no_response_cell_death_and_apoptosis_responses[-c(13,15:21)]
+
+#dna_damage_and_repair_responses w/ "No Effect
+no_response_dna_damage_and_repair_responses <- subset(nmdata_no_na,dna_damage_and_repair_responses=="no_effect")
+#drop all other variable reesponses
+no_response_dna_damage_and_repair_responses <- no_response_dna_damage_and_repair_responses[-c(13:14,16:21)]
+
+#cell_adhesion_and_extracellular_matrix_responses w/ "No Effect
+no_response_cell_adhesion_and_extracellular_matrix_responses <- subset(nmdata_no_na,cell_adhesion_and_extracellular_matrix_responses=="no_effect")
+#drop all other variable responses
+no_response_cell_adhesion_and_extracellular_matrix_responses <- no_response_cell_adhesion_and_extracellular_matrix_responses[-c(13:15,17:21)]
+
+
+#inflammation_and_immune_responses w/ "No Effect
+no_response_inflammation_and_immune_responses <- subset(nmdata_no_na,inflammation_and_immune_responses=="no_effect")
+
+#drop all other variable responses
+no_response_inflammation_and_immune_responses <- no_response_inflammation_and_immune_responses[-c(13:16,18:21)]
+
+#unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress w/ "No Effect
+no_response_unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress <- subset(nmdata_no_na,unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress=="no_effect")
+
+#drop all other variable responses
+no_response_unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress <- no_response_unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress[-c(13:17,19:21)]
+
+#metal_ion_responses w/ "No Effect
+no_response_metal_ion_responses <- subset(nmdata_no_na,metal_ion_responses=="no_effect")
+
+#drop all other variable responses
+no_response_metal_ion_responses <- no_response_metal_ion_responses[-c(13:18,20:21)]
+
+
+#angiogenenesis_responses w/ "No Effect
+no_response_angiogenenesis_responses <- subset(nmdata_no_na,angiogenenesis_responses=="no_effect")
+
+#drop all other variable responses
+no_response_angiogenenesis_responses <- no_response_angiogenenesis_responses[-c(13:19,21)]
+
+#cytoskeleton_organization_responses w/ "No Effect
+no_response_cytoskeleton_organization_responses <- subset(nmdata_no_na,cytoskeleton_organization_responses=="no_effect")
+
+#drop all other variable responses
+no_response_cytoskeleton_organization_responses <- no_response_cytoskeleton_organization_responses[-c(13:20)]
+
+
+```
+
+
+Create random forest model 
+
+```{r}
+#cell_cycle_and_proliferation no effects
+
+rf_no_response_cell_cycle_and_proliferation <- randomForest(no_response_cell_cycle_and_proliferation ~ ., 
+                       data = no_response_cell_cycle_and_proliferation, 
+                       importance = TRUE,
+                       proximity = TRUE)
+
+rf_no_response_cell_cycle_and_proliferation
+
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
