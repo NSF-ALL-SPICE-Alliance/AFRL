@@ -26,6 +26,75 @@ caret)
 
 ```
 
+Load in Data
+
+
+```{r}
+#Import data
+nmdata <- read_csv(here("data/Literature_transcriptomics_review_and_data_of_Nanoparticle_Induced_Cellular_Outcomes.csv"))
+
+```
+
+Clean Column Names
+
+
+```{r}
+nmdata <- nmdata %>% 
+  clean_names()
+```
+
+Replace "?" with NA Values
+
+
+```{r}
+nmdata[nmdata == "?"] <- NA
+```
+
+Omit rows with NA Values (Dataset goes from 244 observations to 178)
+
+```{r}
+nmdata_no_na <- na.omit(nmdata)
+```
+
+
+
+Convert response column (column model is guessing) to class factor
+```{r}
+#cell cycle and profileration 
+nmdata_no_na$cell_cycle_and_proliferation_responses <- as.factor(nmdata_no_na$cell_cycle_and_proliferation_responses)
+
+#cell death and aoptosis
+nmdata_no_na$cell_death_and_apoptosis_responses <- as.factor(nmdata_no_na$cell_death_and_apoptosis_responses)
+
+#dna damage and repair
+nmdata_no_na$dna_damage_and_repair_responses <- as.factor(nmdata_no_na$dna_damage_and_repair_responses)
+
+#cell adhesion and extracelluar matrix response
+nmdata_no_na$cell_adhesion_and_extracellular_matrix_responses <- as.factor(nmdata_no_na$cell_adhesion_and_extracellular_matrix_responses)
+
+#inflammation and immune responses
+nmdata_no_na$inflammation_and_immune_responses<- as.factor(nmdata_no_na$inflammation_and_immune_responses)
+
+#protein responses and endoplastimic reticulum er stress
+nmdata_no_na$unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress <- as.factor(nmdata_no_na$unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress)
+
+#metal ion responses
+nmdata_no_na$metal_ion_responses <- as.factor(nmdata_no_na$metal_ion_responses)
+
+#angio genesis responses
+nmdata_no_na$angiogenenesis_responses <- as.factor(nmdata_no_na$angiogenenesis_responses)
+
+#cytoskeleton organization responses
+nmdata_no_na$cytoskeleton_organization_responses<- as.factor(nmdata_no_na$cytoskeleton_organization_responses)
+
+
+```
+
+
+
+
+
+
 Randomize and Split Data 
 ```{r}
 # Set the seed for reproducibility
