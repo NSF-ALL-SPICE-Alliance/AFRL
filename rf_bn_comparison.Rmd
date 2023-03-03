@@ -53,6 +53,15 @@ Replace "?" with NA Values
 nmdata[nmdata == "?"] <- NA
 ```
 
+
+Identify numeric data
+```{r}
+nmdata$exposure_dose_mg_ml <- as.numeric(nmdata$exposure_dose_mg_ml)
+nmdata$exposure_duration_h <- as.numeric(nmdata$exposure_duration_h)
+```
+
+
+
 Omit rows with NA Values (Dataset goes from 244 observations to 178)
 
 ```{r}
@@ -525,6 +534,15 @@ plot_predict_interaction(rf_metal_ion_responses_limited, nmdata_no_na, "exposure
 
 ```
 
+
+```{r}
+exposure <- as.data.frame(table(nmdata_no_na$exposure_dose_mg_ml))
+exposure
+```
+
+```{r}
+
+```
 
 Random Forest Explainer
 
