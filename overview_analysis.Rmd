@@ -273,7 +273,7 @@ nm_data_long_response_low_exposure <- nm_data_long_response %>%
 ```
 
 ```{r}
-nm_data_long_response$exposure_dose_mg_ml <- as.numeric(nm_data_long_response$exposure_dose_mg_ml)
+nm_data_long_response$exposure_dose_mg_ml <- as.factor(nm_data_long_response$exposure_dose_mg_ml)
 ```
 
 
@@ -283,7 +283,10 @@ nm_data_long_response$exposure_dose_mg_ml <- as.numeric(nm_data_long_response$ex
 ggplot(data = nm_data_long_response, aes(x = exposure_dose_mg_ml,
                                          
                                          fill = response)) +
-  geom_bar(stat = "count", position = "dodge") 
+  geom_bar(stat = "count", position = "dodge", color="black") +
+  facet_wrap(~assay)+
+  theme_minimal()
+  
 ```
 
 
