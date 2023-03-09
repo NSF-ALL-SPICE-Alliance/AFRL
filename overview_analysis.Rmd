@@ -224,3 +224,80 @@ ggplot(data = nmdata_longer_dose_duration, aes(fill=effects, y=exposure_dose_mg_
     ylim(0,30) +
   coord_flip() 
 ```
+
+
+
+```{r}
+ggplot(data = nmdata_longer_dose_duration, aes(x = exposure_duration_h,
+                                               y = exposure_dose_mg_ml,
+                                               color = nanoparticles)) +
+  geom_point() +
+  facet_wrap(~effects + responses) 
+```
+
+
+```{r}
+nmdata_longer_dose_duration_metal_ion <- nmdata_longer_dose_duration %>% 
+  filter(responses == "Metal_Ion")
+```
+
+
+```{r}
+plot <- ggplot(data = nmdata_longer_dose_duration_metal_ion, aes(x = exposure_duration_h,
+                                               y = exposure_dose_mg_ml,
+                                               color = nanoparticles)) +
+  geom_point() +
+  facet_wrap(~effects + responses) 
+```
+
+```{r}
+ggplotly(plot)
+```
+
+
+```{r}
+nm_data_long_response <- nmdata %>% 
+  pivot_longer(cols = Cell_Cycle_and_Proliferation:Cytoskeleton_Organization, names_to = "assay", values_to = "response")
+```
+
+```{r}
+interests <- nm_data_long_response %>%
+  group_by(nanoparticles, assay, exposure_dose_mg_ml, exposure_duration_h) %>%
+  filter(n_distinct(response) > 1) %>%
+  ungroup()
+```
+
+```{r}
+nm_data_long_response_low_exposure <- nm_data_long_response %>% 
+  filter(exposure_dose_mg_ml <= 1)
+```
+
+```{r}
+nm_data_long_response$exposure_dose_mg_ml <- as.numeric(nm_data_long_response$exposure_dose_mg_ml)
+```
+
+
+
+
+```{r}
+ggplot(data = nm_data_long_response, aes(x = exposure_dose_mg_ml,
+                                         
+                                         fill = response)) +
+  geom_bar(stat = "count", position = "dodge") 
+```
+
+
+
+
+```{r}
+nm_data_long_response_exposures <- nm_data_long_response %>% 
+  group_by(exposure_dose_mg_ml)
+```
+
+
+
+```{r}
+Exposure1 <- nm_data_long_response %>% 
+  filter(exposure_dose_mg_ml == 1) 
+```
+
