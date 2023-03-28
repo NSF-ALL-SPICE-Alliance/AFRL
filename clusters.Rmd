@@ -1,0 +1,144 @@
+---
+title: "clusters"
+author: "Connor"
+date: "3/27/2023"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(here)
+library(readr)
+library(janitor)
+library(tidyr)
+library(tidyverse)
+library(plotly)
+library(RColorBrewer)
+library(dplyr)
+library(forcats)
+library(hrbrthemes)
+library(viridis)
+library(factoextra)
+
+options(scipen = 99)
+
+```
+
+The purpose of this R Markdown is to perform a preliminary, overview analysis of the dataset. 
+
+
+Import Data
+
+
+```{r}
+nmdata <- read_csv(here("data/Literature_transcriptomics_review_and_data_of_Nanoparticle_Induced_Cellular_Outcomes.csv"))
+```
+
+Clean Column Names
+
+```{r}
+nmdata <- nmdata %>% 
+  clean_names()
+```
+
+
+```{r}
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress", 
+                                        replacement = "UPR_ER_Stress")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "angiogenenesis_responses", 
+                                        replacement = "Angiogenesis")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "metal_ion_responses", 
+                                        replacement = "Metal_Ion")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "inflammation_and_immune_responses", 
+                                        replacement = "Inflammation_Immune")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "cell_adhesion_and_extracellular_matrix_responses", 
+                                        replacement = "Cell_Adhesion_ECM")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "dna_damage_and_repair_responses", 
+                                        replacement = "DNA_Damage_Repair")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "cell_death_and_apoptosis_responses", 
+                                        replacement = "Cell_Death_Apoptosis")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "cell_cycle_and_proliferation_responses", 
+                                        replacement = "Cell_Cycle_and_Proliferation")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "cytoskeleton_organization_responses", 
+                                        replacement = "Cytoskeleton_Organization")
+
+
+  
+```
+
+
+```{r}
+nmdata[nmdata == "Ag_NPs"] <- "Ag"
+nmdata[nmdata == "Au_NPs"] <- "Au"
+
+nmdata[nmdata == "CuO_NPs"] <- "CuO"
+nmdata[nmdata == "Fe2O3_NPs"] <- "Fe203"
+nmdata[nmdata == "Polymeric_NPs"] <- "Polymeric"
+nmdata[nmdata == "Polystyrene_NPs"] <- "Polystyrene"
+nmdata[nmdata == "TiO2_NPs"] <- "TiO2"
+nmdata[nmdata == "ZnO_NPs"] <- "ZnO"
+```
+
+
+```{r}
+output_cluster <- nmdata %>% 
+  select(Cell_Cycle_and_Proliferation, Cell_Death_Apoptosis, DNA_Damage_Repair, Cell_Adhesion_ECM, Inflammation_Immune, UPR_ER_Stress, Metal_Ion, Angiogenesis, Cytoskeleton_Organization)
+```
+
+
+
+
+
+
+```{r}
+# Convert values of "triggered" and "no effect" to numeric 1 and 0
+output_cluster_numeric <- output_cluster %>% mutate_all(~ifelse(. == "triggered", 1, 0))
+
+output_cluster_numeric_transpose <- as.data.frame(t(output_cluster_numeric))
+
+# Perform k-means clustering with 3 clusters
+set.seed(123)
+kmeans_clusters <- kmeans(output_cluster_numeric_transpose, centers = 7)
+
+# View the cluster assignments
+kmeans_clusters$cluster
+
+# Visualize the clusters
+
+```
+
+
+```{r}
+
+fviz_nbclust(output_cluster_numeric, kmeans, method = "wss")
+```
+
+```{r}
+fviz_nbclust(output_cluster_numeric, kmeans, method = "silhouette")
+```
+
+```{r}
+fviz_cluster(kmeans_clusters, data = output_cluster_numeric_transpose)
+```
+
+
+

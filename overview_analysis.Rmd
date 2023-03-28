@@ -184,6 +184,79 @@ ggplot(data = nmdata_longer_nanoparticles_effects,                         # Dra
   scale_fill_brewer(palette="Set3") 
 
 ```
+
+```{r}
+nmdata_longer_all <- nmdata %>% 
+  tidyr::pivot_longer(cols = c(Cell_Cycle_and_Proliferation:Cytoskeleton_Organization), names_to = "responses", 
+               values_to = "effects")
+```
+
+
+
+```{r}
+nmdata_longer_cell_type_effects <- nmdata_longer_all %>% 
+  group_by(cell_type, responses, effects) %>% 
+  count()
+```
+
+
+```{r}
+ggplot(data = nmdata_longer_cell_type_effects,                         # Draw barplot with grouping & stacking
+       aes(x = n,
+           y = responses,
+           fill = cell_type)) + 
+  geom_bar(stat = "identity",
+           position = "stack") +
+  facet_grid(~ effects) + 
+  #coord_flip() + 
+  theme_minimal() +
+  scale_fill_brewer(palette="Set3") 
+
+```
+
+```{r}
+nmdata_longer_tissue_effects <- nmdata_longer_all %>% 
+  group_by(tissue, responses, effects) %>% 
+  count()
+```
+
+
+```{r}
+ggplot(data = nmdata_longer_tissue_effects,                         # Draw barplot with grouping & stacking
+       aes(x = n,
+           y = responses,
+           fill = tissue)) + 
+  geom_bar(stat = "identity",
+           position = "stack") +
+  facet_grid(~ effects) + 
+  #coord_flip() + 
+  theme_minimal() +
+  scale_fill_brewer(palette="Set3") 
+
+```
+```{r}
+nmdata_longer_surface_coatings_effects <- nmdata_longer_all %>% 
+  group_by(surface_coatings, responses, effects) %>% 
+  count()
+```
+
+
+```{r}
+ggplot(data = nmdata_longer_surface_coatings_effects,                         # Draw barplot with grouping & stacking
+       aes(x = n,
+           y = responses,
+           fill = surface_coatings)) + 
+  geom_bar(stat = "identity",
+           position = "stack") +
+  facet_grid(~ effects) + 
+  #coord_flip() + 
+  theme_minimal() +
+  scale_fill_brewer(palette="Set3") 
+
+```
+
+
+
 Violin Plot
 
 Select Columns of Interest
