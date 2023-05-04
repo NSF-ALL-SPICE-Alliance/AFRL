@@ -21,6 +21,7 @@ library(dplyr)
 library(forcats)
 library(hrbrthemes)
 library(viridis)
+library(paletteer)
 
 options(scipen = 99)
 
@@ -120,6 +121,13 @@ nmdata_longer <- nmdata_longer %>%
 ```
 
 
+```{r}
+nmdata_longer  <- nmdata_longer %>%
+  mutate(responses = gsub("_", " ", responses),
+         effects = gsub("_", " ", effects))
+```
+
+
 Group By Responses and Effects and Count 
 
 ```{r}
@@ -127,6 +135,8 @@ nmdata_longer_responses <- nmdata_longer %>%
   group_by(responses, effects) %>% 
   count()
 ```
+
+
 
 
 Plot Responses and Effects Count
@@ -191,7 +201,11 @@ nmdata_longer_all <- nmdata %>%
                values_to = "effects")
 ```
 
-
+```{r}
+nmdata_longer_all  <- nmdata_longer_all %>%
+  mutate(responses = gsub("_", " ", responses),
+         effects = gsub("_", " ", effects))
+```
 
 ```{r}
 nmdata_longer_cell_type_effects <- nmdata_longer_all %>% 
@@ -231,9 +245,26 @@ ggplot(data = nmdata_longer_tissue_effects,                         # Draw barpl
   facet_grid(~ effects) + 
   #coord_flip() + 
   theme_minimal() +
-  scale_fill_brewer(palette="Set3") 
+  scale_fill_paletteer_d("colorBlindness::Blue2DarkOrange12Steps")
 
 ```
+```{r}
+ggplot(data = nmdata_longer_tissue_effects,                         # Draw barplot with grouping & stacking
+       aes(x = n,
+           y = tissue,
+           fill = effects)) + 
+  geom_bar(stat = "identity",
+           position = "stack") +
+  facet_wrap(~ responses) + 
+  #coord_flip() + 
+  theme_minimal() +
+    scale_fill_brewer(palette = "Dark2", direction = -1) 
+
+```
+
+
+
+
 ```{r}
 nmdata_longer_surface_coatings_effects <- nmdata_longer_all %>% 
   group_by(surface_coatings, responses, effects) %>% 
@@ -244,14 +275,14 @@ nmdata_longer_surface_coatings_effects <- nmdata_longer_all %>%
 ```{r}
 ggplot(data = nmdata_longer_surface_coatings_effects,                         # Draw barplot with grouping & stacking
        aes(x = n,
-           y = responses,
-           fill = surface_coatings)) + 
+           y = surface_coatings,
+           fill = effects)) + 
   geom_bar(stat = "identity",
            position = "stack") +
-  facet_grid(~ effects) + 
+  facet_grid(~ responses) + 
   #coord_flip() + 
   theme_minimal() +
-  scale_fill_brewer(palette="Set3") 
+  scale_fill_brewer(palette = "Dark2", direction = -1) 
 
 ```
 
@@ -296,6 +327,22 @@ ggplot(data = nmdata_longer_dose_duration, aes(fill=effects, y=exposure_dose_mg_
   theme(plot.title = element_text(size = 10, hjust = 0.5)) +
     ylim(0,30) +
   coord_flip() 
+```
+Add Duration
+
+
+
+
+
+
+
+
+```{r}
+ggplot(data = nmdata_longer_dose_duration, aes(x = exposure_duration_h, y = exposure_dose_mg_ml, color = effects)) +
+  geom_point()
+```
+```{r}
+
 ```
 
 
