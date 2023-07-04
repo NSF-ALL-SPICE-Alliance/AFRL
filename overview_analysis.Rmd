@@ -27,7 +27,7 @@ options(scipen = 99)
 
 ```
 
-The purpose of this R Markdown is to perform a preliminary, overview analysis of the dataset. 
+The purpose of this R Markdown is to perform a preliminary, overview analysis of the dataset from "Application of Bayesian networks in determining nanoparticle-induced cellular outcomes using transcriptomics". 
 
 
 Import Data
@@ -44,6 +44,7 @@ nmdata <- nmdata %>%
   clean_names()
 ```
 
+Replace Column Names with Abbreviations
 
 ```{r}
 
@@ -87,6 +88,7 @@ names(nmdata) <- gsub(x = names(nmdata),
   
 ```
 
+Replace Nanoparticles with Abbreviations
 
 ```{r}
 nmdata[nmdata == "Ag_NPs"] <- "Ag"
@@ -120,6 +122,7 @@ nmdata_longer <- nmdata_longer %>%
                values_to = "effects")
 ```
 
+Remove undercores from resposes and effects for visualization cleanliness
 
 ```{r}
 nmdata_longer  <- nmdata_longer %>%
@@ -182,7 +185,7 @@ nmdata_longer_nanoparticles_effects <- nmdata_longer %>%
 Plot Nanoparticles, Responses, and Effects Count
 
 ```{r}
-ggplot(data = nmdata_longer_nanoparticles_effects,                         # Draw barplot with grouping & stacking
+ggplot(data = nmdata_longer_nanoparticles_effects,                
        aes(x = n,
            y = responses,
            fill = nanoparticles)) + 
@@ -213,6 +216,7 @@ nmdata_longer_cell_type_effects <- nmdata_longer_all %>%
   count()
 ```
 
+Plot by Cell Type
 
 ```{r}
 ggplot(data = nmdata_longer_cell_type_effects,                         # Draw barplot with grouping & stacking
@@ -234,6 +238,8 @@ nmdata_longer_tissue_effects <- nmdata_longer_all %>%
   count()
 ```
 
+
+Plot by Tissue
 
 ```{r}
 ggplot(data = nmdata_longer_tissue_effects,                         # Draw barplot with grouping & stacking
@@ -262,7 +268,7 @@ ggplot(data = nmdata_longer_tissue_effects,                         # Draw barpl
 
 ```
 
-
+Plot by Surface Coatings
 
 
 ```{r}
@@ -315,6 +321,8 @@ nmdata_longer_dose_duration$exposure_dose_mg_ml <- as.numeric(nmdata_longer_dose
 
 Plot Violin Plot
 
+*** NOT a great way tp visualize the Data
+
 
 ```{r, warning=FALSE}
 ggplot(data = nmdata_longer_dose_duration, aes(fill=effects, y=exposure_dose_mg_ml, x=responses)) + 
@@ -329,11 +337,6 @@ ggplot(data = nmdata_longer_dose_duration, aes(fill=effects, y=exposure_dose_mg_
   coord_flip() 
 ```
 Add Duration
-
-
-
-
-
 
 
 
@@ -381,15 +384,15 @@ nm_data_long_response <- nmdata %>%
 ```
 
 ```{r}
-interests <- nm_data_long_response %>%
-  group_by(nanoparticles, assay, exposure_dose_mg_ml, exposure_duration_h) %>%
-  filter(n_distinct(response) > 1) %>%
-  ungroup()
+# interests <- nm_data_long_response %>%
+#   group_by(nanoparticles, assay, exposure_dose_mg_ml, exposure_duration_h) %>%
+#   filter(n_distinct(response) > 1) %>%
+#   ungroup()
 ```
 
 ```{r}
-nm_data_long_response_low_exposure <- nm_data_long_response %>% 
-  filter(exposure_dose_mg_ml <= 1)
+# nm_data_long_response_low_exposure <- nm_data_long_response %>% 
+#   filter(exposure_dose_mg_ml <= 1)
 ```
 
 ```{r}
@@ -398,6 +401,12 @@ nm_data_long_response$exposure_dose_mg_ml <- as.factor(nm_data_long_response$exp
 
 
 
+```{r}
+nm_data_long_response$exposure_dose_mg_ml <- factor(nm_data_long_response$exposure_dose_mg_ml,
+                                                   levels = c(0.2, 1, 2.5, 3, 5, 10, 12, 20, 25,
+                                                              30, 40, 50, 60, 75, 100, 150, 200,
+                                                              400, 1000))
+```
 
 ```{r}
 ggplot(data = nm_data_long_response, aes(x = exposure_dose_mg_ml,
@@ -412,15 +421,4 @@ ggplot(data = nm_data_long_response, aes(x = exposure_dose_mg_ml,
 
 
 
-```{r}
-nm_data_long_response_exposures <- nm_data_long_response %>% 
-  group_by(exposure_dose_mg_ml)
-```
-
-
-
-```{r}
-Exposure1 <- nm_data_long_response %>% 
-  filter(exposure_dose_mg_ml == 1) 
-```
 

@@ -53,6 +53,16 @@ Replace "?" with NA Values
 nmdata[nmdata == "?"] <- NA
 ```
 
+Drop microarray method transriptomics
+
+```{r}
+nmdata <- nmdata %>% 
+  select(-microarray_method_transcriptomics)
+```
+
+
+
+
 
 Identify numeric data
 ```{r}
@@ -106,32 +116,32 @@ Subset Data
 
 ```{r}
 cell_cycle_and_proliferation_responses_df <- nmdata_no_na %>% 
-  select(1:13)
+  select(1:12)
 
 cell_death_and_apoptosis_responses_df <- nmdata_no_na %>% 
-  select(1:12, 14)
+  select(1:11, 13)
 
 dna_damage_and_repair_responses_df <- nmdata_no_na %>% 
-  select(1:12, 15)
+  select(1:11, 14)
 
 cell_adhesion_and_extracellular_matrix_responses_df <- nmdata_no_na %>% 
-  select(1:12, 16)
+  select(1:11, 15)
 
 inflammation_and_immune_responses_df <-  nmdata_no_na %>% 
-  select(1:12, 17)
+  select(1:11, 16)
 
 unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress_df <-
   nmdata_no_na %>% 
-  select(1:12, 18)
+  select(1:11, 17)
 
 metal_ion_responses_df <- nmdata_no_na %>% 
-  select(1:12, 19)
+  select(1:11, 18)
 
 angiogenenesis_responses_df <- nmdata_no_na %>% 
-  select(1:12, 20)
+  select(1:11, 19)
 
 cytoskeleton_organization_responses_df <- nmdata_no_na %>% 
-  select(1:12, 21)
+  select(1:11, 20)
 
 ```
 
@@ -521,7 +531,7 @@ plot <- ggplot(all_data_limited, aes(x=Var.Names, y=`MeanDecreaseAccuracy`)) +
   ) +
   facet_wrap(~assay)
 
-ggplotly(plot)
+plot
 
 
 ```
@@ -558,11 +568,7 @@ Cell Cycle and proliferation
 plot_predict_interaction(rf_cell_cycle_and_proliferation_responses_limited, nmdata_no_na, "exposure_dose_mg_ml", "zeta_potential_m_v")
 ```
 
-```{r}
-micro <- nmdata_no_na %>% 
-  group_by(nanoparticles, microarray_method_transcriptomics, cell_cycle_and_proliferation_responses) %>% 
-  count
-```
+
 
 
 Can't seem to find another continuous variable that is important with zeta potential regarding prediction interaction
